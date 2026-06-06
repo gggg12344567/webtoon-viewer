@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>웹툰 뷰어</title>
+
+<style>
+body {
+    margin: 0;
+    background: #111;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    background: #222;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #333;
+}
+
+button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 10px;
+    border: none;
+    background: #ff5c5c;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.upload-box {
+    padding: 10px;
+    background: #f4f4f4;
+    text-align: center;
+}
+
+.webtoon img {
+    width: 100%;
+    display: block;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header" id="title">1화 - 나의 웹툰</div>
+
+    <div class="controls">
+        <button onclick="prevEpisode()">⬅ 이전화</button>
+        <button onclick="nextEpisode()">다음화 ➡</button>
+    </div>
+
+    <div class="upload-box">
+        <p>📤 이미지 추가 (웹툰 컷 만들기)</p>
+        <input type="file" id="fileInput" multiple accept="image/*" onchange="loadImages(event)">
+    </div>
+
+    <div class="webtoon" id="webtoon"></div>
+
+    <div class="footer">내가 만드는 웹툰 뷰어</div>
+
+</div>
+
+<script>
+let episode = 1;
+let episodes = {1: [], 2: [], 3: []};
+
+function loadImages(event) {
+    const files = event.target.files;
+    const container = document.getElementById("webtoon");
+    container.innerHTML = "";
+    episodes[episode] = [];
+
+    for (let file of files) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            episodes[episode].push(e.target.result);
+            render();
+        };
+
+        reader.readAsDataURL(file);
+    }
+    event.target.value = "";
+}
+
+function render() {
+    const container = document.getElementById("webtoon");
+    const title = document.getElementById("title");
+
+    title.innerText = episode + "화 - 나의 웹툰";
+    container.innerHTML = "";
+
+    for (let imgSrc of episodes[episode]) {
+        const img = document.createElement("img");
+        img.src = imgSrc;
+        container.appendChild(img);
+    }
+}
+
+function prevEpisode() {
+    if (episode > 1) {
+        episode--;
+        render();
+    }
+}
+
+function nextEpisode() {
+    if (episode < 3) {
+        episode++;
+        render();
+    }
+}
+
+render();
+</script>
+
+</body>
+</html>
